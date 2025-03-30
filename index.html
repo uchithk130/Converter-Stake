@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Crypto Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .converter {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 1000px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transform-style: preserve-3d;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .conversion-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .conversion-box {
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .conversion-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .currency-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #4a5568;
+            display: flex;
+            justify-content: center;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .currency-label {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .exchange-rate {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #a0aec0;
+            font-weight: 500;
+        }
+
+        .floating-bg {
+            position: fixed;
+            width: 200vw;
+            height: 200vh;
+            background: rgba(255,255,255,0.05);
+            transform: rotate(-45deg);
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            .conversion-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .converter {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Animated border effect */
+        .conversion-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .conversion-box:hover::after {
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-bg"></div>
+    <div class="converter">
+        <h1>
+            <i class="fas fa-rocket" style="color: #667eea;"></i>
+            Advanced Crypto Converter
+        </h1>
+        <div class="conversion-group">
+            <div class="conversion-box">
+                <div class="currency-icon">
+                    <i class="fab fa-btc"></i>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="bnb" placeholder="0.00" step="0.0001">
+                </div>
+                <div class="currency-label">BNB to USD</div>
+                <div class="exchange-rate">1 BNB = $604.23</div>
+            </div>
+
+            <div class="conversion-box">
+                <div class="currency-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="usd" placeholder="0.00">
+                </div>
+                <div class="currency-label">USD to INR</div>
+                <div class="exchange-rate">1 USD = ₹100.00</div>
+            </div>
+
+            <div class="conversion-box">
+                <div class="currency-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="inr" placeholder="0.00">
+                </div>
+                <div class="currency-label">INR to BNB</div>
+                <div class="exchange-rate">1 BNB = ₹60,423.00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rates = {
+            BNB_USD: 604.23,
+            USD_INR: 100,
+            INR_BNB: 1 / (604.23 * 100)
+        };
+
+        const inputs = {
+            bnb: document.getElementById('bnb'),
+            usd: document.getElementById('usd'),
+            inr: document.getElementById('inr')
+        };
+
+        function convert(source, value) {
+            if (!value) {
+                Object.values(inputs).forEach(input => input.value = '');
+                return;
+            }
+
+            const numValue = parseFloat(value);
+            
+            switch(source) {
+                case 'bnb':
+                    inputs.usd.value = (numValue * rates.BNB_USD).toFixed(2);
+                    inputs.inr.value = (numValue * rates.BNB_USD * rates.USD_INR).toFixed(2);
+                    break;
+                case 'usd':
+                    inputs.bnb.value = (numValue / rates.BNB_USD).toFixed(4);
+                    inputs.inr.value = (numValue * rates.USD_INR).toFixed(2);
+                    break;
+                case 'inr':
+                    inputs.usd.value = (numValue / rates.USD_INR).toFixed(2);
+                    inputs.bnb.value = (numValue * rates.INR_BNB).toFixed(6);
+                    break;
+            }
+        }
+
+        Object.entries(inputs).forEach(([key, input]) => {
+            input.addEventListener('input', (e) => {
+                convert(key, e.target.value);
+            });
+            
+            input.addEventListener('focus', (e) => {
+                e.target.parentElement.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', (e) => {
+                e.target.parentElement.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
