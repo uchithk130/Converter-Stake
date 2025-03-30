@@ -31,7 +31,6 @@
             width: 100%;
             max-width: 1000px;
             border: 1px solid rgba(255,255,255,0.2);
-            transform-style: preserve-3d;
         }
 
         h1 {
@@ -117,15 +116,6 @@
             font-weight: 500;
         }
 
-        .floating-bg {
-            position: fixed;
-            width: 200vw;
-            height: 200vh;
-            background: rgba(255,255,255,0.05);
-            transform: rotate(-45deg);
-            z-index: -1;
-        }
-
         @media (max-width: 768px) {
             .conversion-group {
                 grid-template-columns: 1fr;
@@ -139,38 +129,13 @@
                 font-size: 24px;
             }
         }
-
-        /* Animated border effect */
-        .conversion-box::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            padding: 2px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-            mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .conversion-box:hover::after {
-            opacity: 0.3;
-        }
     </style>
 </head>
 <body>
-    <div class="floating-bg"></div>
     <div class="converter">
         <h1>
-            <i class="fas fa-rocket" style="color: #667eea;"></i>
-            Advanced Crypto Converter
+            <i class="fas fa-coins" style="color: #667eea;"></i>
+            Crypto Currency Converter
         </h1>
         <div class="conversion-group">
             <div class="conversion-box">
@@ -209,53 +174,61 @@
     </div>
 
     <script>
-        const rates = {
+        // Conversion rates
+        const RATES = {
             BNB_USD: 604.23,
             USD_INR: 100,
             INR_BNB: 1 / (604.23 * 100)
         };
 
+        // DOM elements
         const inputs = {
             bnb: document.getElementById('bnb'),
             usd: document.getElementById('usd'),
             inr: document.getElementById('inr')
         };
 
-        function convert(source, value) {
-            if (!value) {
+        // Conversion functions
+        const convert = {
+            bnbToUsd: value => value * RATES.BNB_USD,
+            usdToInr: value => value * RATES.USD_INR,
+            inrToBnb: value => value * RATES.INR_BNB,
+            usdToBnb: value => value / RATES.BNB_USD,
+            inrToUsd: value => value / RATES.USD_INR
+        };
+
+        // Main conversion handler
+        function handleConversion(sourceId, value) {
+            if (value === '') {
                 Object.values(inputs).forEach(input => input.value = '');
                 return;
             }
 
             const numValue = parseFloat(value);
-            
-            switch(source) {
+            if (isNaN(numValue)) return;
+
+            switch(sourceId) {
                 case 'bnb':
-                    inputs.usd.value = (numValue * rates.BNB_USD).toFixed(2);
-                    inputs.inr.value = (numValue * rates.BNB_USD * rates.USD_INR).toFixed(2);
+                    inputs.usd.value = convert.bnbToUsd(numValue).toFixed(2);
+                    inputs.inr.value = convert.usdToInr(convert.bnbToUsd(numValue)).toFixed(2);
                     break;
+                
                 case 'usd':
-                    inputs.bnb.value = (numValue / rates.BNB_USD).toFixed(4);
-                    inputs.inr.value = (numValue * rates.USD_INR).toFixed(2);
+                    inputs.bnb.value = convert.usdToBnb(numValue).toFixed(4);
+                    inputs.inr.value = convert.usdToInr(numValue).toFixed(2);
                     break;
+                
                 case 'inr':
-                    inputs.usd.value = (numValue / rates.USD_INR).toFixed(2);
-                    inputs.bnb.value = (numValue * rates.INR_BNB).toFixed(6);
+                    inputs.usd.value = convert.inrToUsd(numValue).toFixed(2);
+                    inputs.bnb.value = convert.inrToBnb(numValue).toFixed(6);
                     break;
             }
         }
 
-        Object.entries(inputs).forEach(([key, input]) => {
+        // Event listeners
+        Object.entries(inputs).forEach(([id, input]) => {
             input.addEventListener('input', (e) => {
-                convert(key, e.target.value);
-            });
-            
-            input.addEventListener('focus', (e) => {
-                e.target.parentElement.parentElement.style.transform = 'scale(1.02)';
-            });
-            
-            input.addEventListener('blur', (e) => {
-                e.target.parentElement.parentElement.style.transform = 'scale(1)';
+                handleConversion(id, e.target.value);
             });
         });
     </script>
